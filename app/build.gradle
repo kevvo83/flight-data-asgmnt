@@ -22,9 +22,7 @@ repositories {
 dependencies {
     // Use Scala 2.13 in our library project
     implementation libs.scala.library
-
-    // This dependency is used by the application.
-    implementation libs.guava
+    //
 }
 
 testing {
@@ -38,9 +36,6 @@ testing {
                 // Use Scalatest for testing our library
                 implementation libs.scalatest.v2.v13
                 implementation libs.junit.v4.v13.v2.v13
-
-                // Need scala-xml at test runtime
-                runtimeOnly libs.scala.xml.v2.v13
             }
         }
     }
