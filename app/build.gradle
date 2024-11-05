@@ -20,9 +20,11 @@ repositories {
 }
 
 dependencies {
-    // Use Scala 2.13 in our library project
+    // Use Scala 2.12 in our library project
     implementation libs.scala.library
-    //
+
+    // Spark
+    implementation libs.sparkcore.v2.v12
 }
 
 testing {
