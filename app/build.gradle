@@ -54,5 +54,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'proj.flightdata.App'
+    mainClassName = project.findProperty("chooseMain").toString()
 }
