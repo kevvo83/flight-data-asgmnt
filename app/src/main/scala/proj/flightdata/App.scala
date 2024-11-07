@@ -44,24 +44,23 @@ object App extends App {
     csv("src/main/resources/flightData.csv").
     withColumn("monthOfYear", month(col("date")))
 
-  if (debug)
+  if (debug) {
     passengersDf.printSchema()
     println(passengersDf.columns.mkString)
     passengersDf.head(10).foreach(println(_))
-
     flightDataDf.printSchema()
     flightDataDf.head(10).foreach(println(_))
+  }
 
   // question 1
-  if (debug)
-    flightDataDf.
-      groupBy(col("monthOfYear")).
-      agg(countDistinct(col("flightId")).alias("number_of_flights")).
-      orderBy(asc("monthOfYear")).
-      repartition(1).
-      write.option("header", "true").
-      mode(SaveMode.Overwrite).
-      format("csv").save("answer1.csv")
+  flightDataDf.
+    groupBy(col("monthOfYear")).
+    agg(countDistinct(col("flightId")).alias("number_of_flights")).
+    orderBy(asc("monthOfYear")).
+    repartition(1).
+    write.option("header", "true").
+    mode(SaveMode.Overwrite).
+    format("csv").save("answer1.csv")
 
   /* val denormalizedDf = flightDataDf.join(
     broadcast(passengersDf),
@@ -72,11 +71,24 @@ object App extends App {
   // question 2
   flightDataDf.
     groupBy(col("passengerId")).
-    agg(countDistinct(col("flightId"))).
+    agg(countDistinct(col("flightId")).alias("number_of_flights")).
+    orderBy(desc("number_of_flights"), asc("passengerId")).
+    join(
+      passengersDf,
+      flightDataDf("passengerId") === passengersDf("passengerId"),
+      "left"
+    ).
+    select(flightDataDf("passengerId"), col("number_of_flights"), col("firstName"), col("lastName")).
     repartition(1).
     write.option("header", "true").
     mode(SaveMode.Overwrite).
     format("csv").save("answer2.csv")
+
+  // question 4
+  flightDataDf.
+    withColumn("passengerId2", col("passengerId")).
+    filter(col("passengerId") =!= col("passengerId2")).
+    groupBy(col("passengerId"), col("passengerId2")).agg()
 
 
   private def greeting(): String = "Hello, world!"
