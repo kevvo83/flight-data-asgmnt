@@ -4,7 +4,8 @@
 package proj.flightdata
 
 import org.apache.spark.sql.SparkSession
-import scala.io.Source
+import org.apache.spark.sql.functions.{col, countDistinct, month, asc}
+import org.apache.spark.sql.types.{DateType, StringType, StructType}
 
 
 object App extends App {
@@ -16,8 +17,42 @@ object App extends App {
     .appName("flight-data-assignment")
     .getOrCreate()
 
-  val flightDataDf = spark.read.csv("src/main/resources/passengers.csv")
-  flightDataDf.printSchema()
+  val debug: Boolean = false
+
+  val passengersDf = spark.
+    read.
+    option("header", "true").
+    csv("src/main/resources/passengers.csv")
+
+  val flightDataDf = spark.
+    read.
+    option("header", "true").
+    schema(
+      new StructType().
+        add("passengerId", StringType).
+        add("flightId", StringType).
+        add("from", StringType).
+        add("to", StringType).
+        add("date", DateType)
+    ).
+    csv("src/main/resources/flightData.csv").
+    withColumn("monthOfYear", month(col("date")))
+
+  if (debug)
+    passengersDf.printSchema()
+    println(passengersDf.columns.mkString)
+    passengersDf.head(10).foreach(println(_))
+
+    flightDataDf.printSchema()
+    flightDataDf.head(10).foreach(println(_))
+
+  // question 1
+  flightDataDf.
+    groupBy(col("monthOfYear")).
+    agg(countDistinct(col("flightId")).alias("number_of_flights")).
+    orderBy(asc("monthOfYear")).
+    repartition(1).
+    write.format("csv").save("answer1.csv")
 
 
   private def greeting(): String = "Hello, world!"
