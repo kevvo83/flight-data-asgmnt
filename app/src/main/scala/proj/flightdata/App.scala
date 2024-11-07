@@ -3,9 +3,9 @@
  */
 package proj.flightdata
 
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{col, countDistinct, month, asc}
-import org.apache.spark.sql.types.{DateType, StringType, StructType}
+import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.functions.{asc, broadcast, col, countDistinct, desc, month}
+import org.apache.spark.sql.types.{DateType, StringType, StructType, IntegerType}
 
 
 object App extends App {
@@ -22,6 +22,12 @@ object App extends App {
   val passengersDf = spark.
     read.
     option("header", "true").
+    schema(
+      new StructType().
+        add("passengerId", IntegerType).
+        add("firstName", StringType).
+        add("lastName", StringType)
+    ).
     csv("src/main/resources/passengers.csv")
 
   val flightDataDf = spark.
@@ -29,8 +35,8 @@ object App extends App {
     option("header", "true").
     schema(
       new StructType().
-        add("passengerId", StringType).
-        add("flightId", StringType).
+        add("passengerId", IntegerType).
+        add("flightId", IntegerType).
         add("from", StringType).
         add("to", StringType).
         add("date", DateType)
@@ -47,12 +53,30 @@ object App extends App {
     flightDataDf.head(10).foreach(println(_))
 
   // question 1
+  if (debug)
+    flightDataDf.
+      groupBy(col("monthOfYear")).
+      agg(countDistinct(col("flightId")).alias("number_of_flights")).
+      orderBy(asc("monthOfYear")).
+      repartition(1).
+      write.option("header", "true").
+      mode(SaveMode.Overwrite).
+      format("csv").save("answer1.csv")
+
+  /* val denormalizedDf = flightDataDf.join(
+    broadcast(passengersDf),
+    flightDataDf("passengerId") === passengersDf("passengerId"),
+    "left_outer"
+  )*/
+
+  // question 2
   flightDataDf.
-    groupBy(col("monthOfYear")).
-    agg(countDistinct(col("flightId")).alias("number_of_flights")).
-    orderBy(asc("monthOfYear")).
+    groupBy(col("passengerId")).
+    agg(countDistinct(col("flightId"))).
     repartition(1).
-    write.format("csv").save("answer1.csv")
+    write.option("header", "true").
+    mode(SaveMode.Overwrite).
+    format("csv").save("answer2.csv")
 
 
   private def greeting(): String = "Hello, world!"
