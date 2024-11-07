@@ -3,12 +3,16 @@
 
 [versions]
 scala-library = "2.12.10"
-junit-v4-v13-v2-v13 = "3.2.2.0"
-scalatest-v2-v13 = "3.2.19"
-spark-core-v2-v12 = "3.5.3"
+# TODO: find the right testing dependencies
+# junit-v4-v13-v2-v13 = "3.2.2.0"
+# scalatest-v2-v13 = "3.2.19"
+spark-core-v2-v12 = "2.4.8"
+spark-sql-v2-v12 = "2.4.8"
 
 [libraries]
 scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala-library" }
-junit-v4-v13-v2-v13 = { module = "org.scalatestplus:junit-4-13_2.13", version.ref = "junit-v4-v13-v2-v13" }
-scalatest-v2-v13 = { module = "org.scalatest:scalatest_2.12", version.ref = "scalatest-v2-v13" }
+# TODO: find the right testing dependencies
+# junit-v4-v13-v2-v13 = { module = "org.scalatestplus:junit-4-13_2.13", version.ref = "junit-v4-v13-v2-v13" }
+# scalatest-v2-v13 = { module = "org.scalatest:scalatest_2.12", version.ref = "scalatest-v2-v13" }
 sparkcore-v2-v12 = { module = "org.apache.spark:spark-core_2.12", version.ref = "spark-core-v2-v12" }
+spark-sql-v2-v12 = { module = "org.apache.spark:spark-sql_2.12", version.ref = "spark-sql-v2-v12" }

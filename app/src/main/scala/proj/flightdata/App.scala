@@ -3,9 +3,22 @@
  */
 package proj.flightdata
 
+import org.apache.spark.sql.SparkSession
+import scala.io.Source
+
+
 object App extends App {
 
   println(greeting())
 
-  def greeting(): String = "Hello, world!"
+  val spark = SparkSession
+    .builder().master("local")
+    .appName("flight-data-assignment")
+    .getOrCreate()
+
+  val flightDataDf = spark.read.csv("src/main/resources/passengers.csv")
+  flightDataDf.printSchema()
+
+
+  private def greeting(): String = "Hello, world!"
 }
