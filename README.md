@@ -8,14 +8,29 @@
 ./gradlew build
 ```
 
-### Run application
+### Run application to generate responses
 
-```commandline
-# Get the responses for questions 1 and 2
+#### Generate answers for questions 1 and 2
+
+```cmd
 ./gradlew run -PchooseMain=proj.flightdata.oneandtwo.App
-
-# Get the responses for question 3
-
-# Get the responses for question 4
 ```
 
+#### Generate answers for question 3
+
+```cmd
+./gradlew run -PchooseMain=proj.flightdata.three.App
+```
+
+#### Generate answers for question 4
+
+```commandline
+./gradlew run -PchooseMain=proj.flightdata.four.App
+```
+
+### Debug using the Scala REPL
+
+```cmd
+cd ~
+scala -cp ".gradle/caches/modules-2/files-2.1" 
+```

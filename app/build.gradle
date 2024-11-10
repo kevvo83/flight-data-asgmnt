@@ -26,24 +26,11 @@ dependencies {
     // Spark
     implementation libs.sparkcore.v2.v12
     implementation libs.spark.sql.v2.v12
+
+
+    testImplementation libs.scalatest.v2.v13
+    testImplementation libs.junit.v4.v12.v2.v13
 }
-
-// TODO: fix the testing dependencies for older 2.12
-/* testing {
-    suites {
-        // Configure the built-in test suite
-        test {
-            // Use JUnit4 test framework
-            useJUnit('4.13.2')
-
-            dependencies {
-                // Use Scalatest for testing our library
-                // implementation libs.scalatest.v2.v13
-                // implementation libs.junit.v4.v13.v2.v13
-            }
-        }
-    }
-} */
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
