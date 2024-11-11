@@ -68,24 +68,4 @@ object App extends App {
     filter(flownTogether(_)(3, Date.valueOf("2017-01-01"), Date.valueOf("2017-12-01"))).
     withColumn("flightsFlownTogether", col("flightsFlownTogether").cast(StringType)).
     repartition(1).write.option("header","true").mode(SaveMode.Overwrite).csv("../answer4.csv")
-
-
-  // result.count()
-
-  // flightDataDf.groupBy('flightId).agg(collect_set('passengerId))
-
-  /*val ds1 = flightDataDf.select($"passengerId".alias("pid2"), $"flightId".alias("fid2"))
-
-  val result = flightDataDf.join(ds1, col("flightId") === col("fid2"), "cross").
-    filter(col("passengerId") =!= col("pid2")).
-    groupBy(col("passengerId"), col("pid2")).
-    agg(
-      sumDistinct(col("flightId")).alias("numberOfFlightsTogether"),
-      min(col("date")).alias("from"),
-      max(col("date")).alias("to")
-    ).orderBy(desc("numberOfFlightsTogether"))
-
-  result.filter(col("numberOfFlightsTogether") > 3).repartition(1).write.option("header", "true").
-  mode(SaveMode.Overwrite).csv("../answer4.csv")
-   */
 }
