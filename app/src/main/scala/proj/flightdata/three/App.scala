@@ -1,10 +1,9 @@
 package proj.flightdata.three
 
 import org.apache.spark.sql.{SaveMode, SparkSession}
-import org.apache.spark.sql.functions.{asc, col, collect_list, lag, lead, month, udf}
+import org.apache.spark.sql.functions.{asc, col, collect_list, lag, lead, lit, udf}
 import org.apache.spark.sql.types.{ArrayType, DateType, IntegerType, StringType, StructType}
-import java.sql.Date
-
+import proj.common.FlightData
 
 object App extends App {
 
@@ -22,7 +21,7 @@ object App extends App {
     res :+ acc
   }
 
-  case class FlightData(passengerId: Integer, flightId: Integer, from: String, to: String, date: Date)
+  def getRunsAvoidingUk = udf((s: Array[String]) => getRuns(s, "uk"))
 
   val spark = SparkSession
     .builder().master("local")
@@ -45,11 +44,8 @@ object App extends App {
     csv("src/main/resources/flightData.csv").
     repartition(col("passengerId")).as[FlightData]
 
-  flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations"))
-
-    flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations").cast(StringType)).repartition(1).
-      write.option("header", "true").
-      mode(SaveMode.Overwrite).
-      format("csv").save("../answer3.csv")
+  // TODO: Incomplete
+  flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations")).printSchema()
+    //withColumn("spans", getRunsAvoidingUk(col("locations"))).show()
 
 }
