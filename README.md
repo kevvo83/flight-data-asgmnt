@@ -28,6 +28,13 @@
 ./gradlew run -PchooseMain=proj.flightdata.four.App
 ```
 
+#### Tests
+
+```commandline
+./gradlew :app:test --tests "proj.flightdata.four.DataTest"
+./gradlew :app:test --tests "proj.flightdata.three.TestUDF"
+```
+
 ### Debug using the Scala REPL
 
 ```cmd

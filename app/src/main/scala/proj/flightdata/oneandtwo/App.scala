@@ -58,7 +58,7 @@ object App extends App {
     repartition(1).
     write.option("header", "true").
     mode(SaveMode.Overwrite).
-    format("csv").save("answer1.csv")
+    format("csv").save("../answer1.csv")
 
   /* val denormalizedDf = flightDataDf.join(
     broadcast(passengersDf),
@@ -80,6 +80,6 @@ object App extends App {
     repartition(1).
     write.option("header", "true").
     mode(SaveMode.Overwrite).
-    format("csv").save("answer2.csv")
+    format("csv").save("../answer2.csv")
 
 }

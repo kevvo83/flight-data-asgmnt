@@ -44,7 +44,7 @@ object App extends App {
     csv("src/main/resources/flightData.csv").
     repartition(col("passengerId")).as[FlightData]
 
-  // TODO: Incomplete
+  // TODO: Need to fix casting issues with UDF on columns
   flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations")).printSchema()
     //withColumn("spans", getRunsAvoidingUk(col("locations"))).show()
 
