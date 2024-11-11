@@ -48,6 +48,7 @@ object App extends App {
     withColumn("kakidsFids", collect_set("flightId").over(Window.partitionBy(col("hash")).orderBy(col("p1")))).
     filter(col("row_num") === 1). // remove duplicates of tuples of passengerId
     select(
+      // TODO: dates are not correct - they need to be windowed together with the FlightIDs
       col("p1"), col("p2"), col("date"), explode(col("kakidsFids")).as("flightId")
     )
 
@@ -64,7 +65,8 @@ object App extends App {
     ).orderBy("numberOfFlightsTogether").as[PassengersFlownTogether]
 
   aggDs.
-    //filter(flownTogether(_)(3, Date.valueOf("2017-01-01"), Date.valueOf("2017-12-01"))).
+    filter(flownTogether(_)(3, Date.valueOf("2017-01-01"), Date.valueOf("2017-12-01"))).
+    withColumn("flightsFlownTogether", col("flightsFlownTogether").cast(StringType)).
     repartition(1).write.option("header","true").mode(SaveMode.Overwrite).csv("../answer4.csv")
 
 
