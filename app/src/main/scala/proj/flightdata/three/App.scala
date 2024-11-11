@@ -4,24 +4,9 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.functions.{asc, col, collect_list, lag, lead, lit, udf}
 import org.apache.spark.sql.types.{ArrayType, DateType, IntegerType, StringType, StructType}
 import proj.common.FlightData
+import proj.common.UDFDefs._
 
 object App extends App {
-
-  def getRuns(destinations: Array[String], avoid: String): Array[Int] = {
-    var res: Array[Int] = Array()
-    var acc: Int = 0
-
-    destinations.foreach {
-      case "uk" => {
-        res = res :+ acc
-        acc = 0
-      }
-      case _ => acc += 1
-    }
-    res :+ acc
-  }
-
-  def getRunsAvoidingUk = udf((s: Array[String]) => getRuns(s, "uk"))
 
   val spark = SparkSession
     .builder().master("local")
@@ -45,7 +30,7 @@ object App extends App {
     repartition(col("passengerId")).as[FlightData]
 
   // TODO: Need to fix casting issues with UDF on columns
-  flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations")).printSchema()
-    //withColumn("spans", getRunsAvoidingUk(col("locations"))).show()
+  flightDataDf.groupBy(col("passengerId")).agg(collect_list(col("from")).alias("locations")).
+    withColumn("spans", getRunsAvoidingUk(col("locations"))).show()
 
 }

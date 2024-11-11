@@ -15,4 +15,21 @@ object UDFDefs {
 
   def flownTogether(details: PassengersFlownTogether)(atLeastNTimes: Int, from: Date, to: Date): Boolean =
     details.numberOfFlightsTogether >= atLeastNTimes && details.from.after(from) && details.to.before(to)
+
+  def getRuns(destinations: Array[String], avoid: String): Array[Int] = {
+    var res: Array[Int] = Array()
+    var acc: Int = 0
+
+    destinations.foreach {
+      case "uk" => {
+        res = res :+ acc
+        acc = 0
+      }
+      case _ => acc += 1
+    }
+    res :+ acc
+  }
+
+  def getRunsAvoidingUk: UserDefinedFunction = udf((s: Array[String]) => getRuns(s, "uk"))
+
 }
