@@ -1,7 +1,7 @@
 package proj.flightdata.three
 
 import org.scalatest.funsuite.AnyFunSuite
-import proj.flightdata.three.App.getRuns
+import proj.common.UDFDefs.getRuns
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 

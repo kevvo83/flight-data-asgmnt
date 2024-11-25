@@ -9,7 +9,6 @@ import org.scalatestplus.junit.JUnitRunner
 import org.apache.spark.sql.expressions.Window
 import proj.common.FlightData
 import proj.common.UDFDefs.createHashUdf
-import proj.flightdata.four.App.flightDataDf
 
 @RunWith(classOf[JUnitRunner])
 class DataTest extends AnyFunSuite {
