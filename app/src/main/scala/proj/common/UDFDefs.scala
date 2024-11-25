@@ -16,7 +16,7 @@ object UDFDefs {
   def flownTogether(details: PassengersFlownTogether)(atLeastNTimes: Int, from: Date, to: Date): Boolean =
     details.numberOfFlightsTogether >= atLeastNTimes && details.from.after(from) && details.to.before(to)
 
-  def getRuns(destinations: Array[String], avoid: String): Array[Int] = {
+  def getRuns(destinations: Seq[String], avoid: String): Array[Int] = {
     var res: Array[Int] = Array()
     var acc: Int = 0
 
@@ -30,6 +30,10 @@ object UDFDefs {
     res :+ acc
   }
 
-  def getRunsAvoidingUk: UserDefinedFunction = udf((s: Array[String]) => getRuns(s, "uk"))
+  def getUniqueLocations: UserDefinedFunction = udf((ip: Seq[String]) => ip.distinct)
+
+  def getRunsAvoidingUk: UserDefinedFunction = udf((s: Seq[String]) => getRuns(s, "uk"))
+
+  def getMaxSpanFromListOfSpans: UserDefinedFunction = udf((ip: Seq[Int]) => ip.max)
 
 }

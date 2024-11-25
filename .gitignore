@@ -12,3 +12,7 @@ build
 
 # Intellij local environment files
 .idea/
+
+# Spark history server files
+spark-history-server/*
+spark-history-server
