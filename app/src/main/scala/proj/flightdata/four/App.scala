@@ -1,7 +1,7 @@
 package proj.flightdata.four
 
 import org.apache.spark.sql.{SaveMode, SparkSession}
-import org.apache.spark.sql.functions.{col, collect_list, collect_set, count, countDistinct, desc, max, min, row_number, explode}
+import org.apache.spark.sql.functions.{arrays_zip, col, collect_list, collect_set, count, countDistinct, desc, explode, max, min, row_number}
 import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
 import proj.common.{FlightData, PassengersFlownTogether}
 import org.apache.spark.sql.expressions.Window
@@ -46,12 +46,15 @@ object App extends App {
     withColumn("hash", createHashUdf(col("p1"), col("p2"))).
     withColumn("row_num", row_number().over(Window.partitionBy(col("hash")).orderBy(col("p1")))).
     withColumn("kakidsFids", collect_set("flightId").over(Window.partitionBy(col("hash")).orderBy(col("p1")))).
+    withColumn("date", collect_set("date").over(Window.partitionBy(col("hash")).orderBy(col("p1")))).
     filter(col("row_num") === 1). // remove duplicates of tuples of passengerId
+    withColumn("zip_col", explode(arrays_zip(col("kakidsFids"), col("date")))).
     select(
       // TODO: dates are not correct - they need to be windowed together with the FlightIDs
-      col("p1"), col("p2"), col("date"), explode(col("kakidsFids")).as("flightId")
+      col("p1"), col("p2"), col("zip_col.kakidsFids").as("flightId"), col("zip_col.date").as("date")
     )
 
+  // result.printSchema()
   result.show(20)
 
   val aggDs = result.groupBy(
@@ -62,10 +65,10 @@ object App extends App {
       collect_set(col("flightId")).as("flightsFlownTogether"),
       min(col("date")).as("from"),
       max(col("date")).as("to")
-    ).orderBy("numberOfFlightsTogether").as[PassengersFlownTogether]
+    ).orderBy(desc("numberOfFlightsTogether")).as[PassengersFlownTogether]
 
   aggDs.
-    filter(flownTogether(_)(3, Date.valueOf("2017-01-01"), Date.valueOf("2017-12-01"))).
+    filter(flownTogether(_)(3, Date.valueOf("2017-10-01"), Date.valueOf("2017-10-31"))).
     withColumn("flightsFlownTogether", col("flightsFlownTogether").cast(StringType)).
     repartition(1).write.option("header","true").mode(SaveMode.Overwrite).csv("../answer4.csv")
 }
