@@ -3,7 +3,6 @@
 
 [versions]
 scala-library = "2.12.10"
-# TODO: find the right testing dependencies
 junit-v4-v12-v2-v13 = "3.2.2.0"
 scalatest-v2-v13 = "3.2.19"
 spark-core-v2-v12 = "2.4.8"

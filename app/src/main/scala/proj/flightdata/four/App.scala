@@ -50,7 +50,6 @@ object App extends App {
     filter(col("row_num") === 1). // remove duplicates of tuples of passengerId
     withColumn("zip_col", explode(arrays_zip(col("kakidsFids"), col("date")))).
     select(
-      // TODO: dates are not correct - they need to be windowed together with the FlightIDs
       col("p1"), col("p2"), col("zip_col.kakidsFids").as("flightId"), col("zip_col.date").as("date")
     )
 
