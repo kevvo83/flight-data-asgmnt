@@ -1,11 +1,11 @@
-package proj.flightdata.four
+package proj.flightdata.submission.four
 
-import org.apache.spark.sql.{SaveMode, SparkSession}
-import org.apache.spark.sql.functions.{arrays_zip, col, collect_list, collect_set, count, countDistinct, desc, explode, max, min, row_number}
-import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
-import proj.common.{FlightData, PassengersFlownTogether}
 import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.{SaveMode, SparkSession}
 import proj.common.UDFDefs._
+import proj.common.{FlightData, PassengersFlownTogether}
 
 import java.sql.Date
 

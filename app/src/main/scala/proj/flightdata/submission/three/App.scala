@@ -1,8 +1,8 @@
-package proj.flightdata.three
+package proj.flightdata.submission.three
 
-import org.apache.spark.sql.{SaveMode, SparkSession}
-import org.apache.spark.sql.functions.{array, asc, col, collect_list, desc, flatten}
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.{SaveMode, SparkSession}
 import proj.common.FlightData
 import proj.common.UDFDefs._
 
