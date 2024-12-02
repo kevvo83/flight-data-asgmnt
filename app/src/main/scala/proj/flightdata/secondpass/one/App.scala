@@ -27,6 +27,10 @@ object App extends App {
     csv("src/main/resources/flightData.csv").
     withColumn("monthOfYear", month(col("date")))
 
+  // Major changes:
+  // 1. range partition on the column for groupBy - have more partitions on the executor
+  // 2. Brings the number of exchanges down
+
   flightDataDf.
     repartitionByRange(col("monthOfYear")).
     groupBy(col("monthOfYear")).agg(countDistinct(col("flightId")).alias("number_of_flights")).

@@ -39,6 +39,10 @@ object App extends App {
     ).
     csv("src/main/resources/passengers.csv")
 
+  // Major changes:
+  // 1. range partition on the column for groupBy - have more partitions on the executor
+  // 2. Brings the number of exchanges down
+
   flightDataDf.as("t1").selectExpr("t1.passengerId", "t1.flightId").
     repartitionByRange(col("passengerId")).
     groupBy(col("passengerId")).

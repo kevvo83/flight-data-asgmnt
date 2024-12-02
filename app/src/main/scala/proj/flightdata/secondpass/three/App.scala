@@ -1,4 +1,4 @@
-package proj.flightdata.submission.three
+package proj.flightdata.secondpass.three
 
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
@@ -8,14 +8,16 @@ import proj.common.UDFDefs._
 
 object App extends App {
 
-  val spark = SparkSession
+  private val spark = SparkSession
     .builder().master("local")
-    .appName("flight-data-assignment-three")
+    .appName("flight-data-assignment-secondpass-three")
     .config("spark.eventLog.enabled", value = true)
     .config("spark.eventLog.dir", "/Users/kevinlawrence/Downloads/spark-history-server/eventLogs/")
     .getOrCreate()
 
-  import spark.implicits._
+  // Major changes:
+  // 1. range partition on the column for groupBy - have more partitions on the executor
+  // 2. Brings the number of exchanges down
 
   val flightDataDf = spark.
     read.
@@ -28,19 +30,19 @@ object App extends App {
         add("to", StringType).
         add("date", DateType)
     ).
-    csv("src/main/resources/flightData.csv").
-    repartition(col("passengerId")).as[FlightData]
-
-  private val table_name = "flight_data_part_by_pass_id"
+    csv("src/main/resources/flightData.csv") // removed the cast to case class - doesn't add much value
 
   val res = flightDataDf.
+    repartition(col("passengerId")).
     sortWithinPartitions(asc("date")).
     withColumn("countries", array(col("from"), col("to"))).
     groupBy(col("passengerId")).agg(collect_list(col("countries")).alias("locations")).
-    withColumn("locations", flatten(col("locations"))).
-    withColumn("locations", getUniqueLocations(col("locations"))).
+    withColumn("locations", getUniqueLocations(flatten(col("locations")))).
     withColumn("spans", getRunsAvoidingUk(col("locations"))).
     withColumn("longestRun", getMaxSpanFromListOfSpans(col("spans")))
+
+  // Only thing I changed was to remove the cast to `FlightData` case class in DataSet
+  // Reason being - I was always using Df operations - this didn't add any value
 
   res.
     withColumn("spans", col("spans").cast(StringType)).
@@ -49,10 +51,6 @@ object App extends App {
     repartition(1).
     write.option("header", "true").
     mode(SaveMode.Overwrite).
-    format("csv").save("../answer3.csv")
-
-  res.printSchema()
-  res.show(20)
-  res.explain()
+    format("csv").save("../secondpass/answer3.csv")
 
 }

@@ -45,6 +45,6 @@ scala -cp ".gradle/caches/modules-2/files-2.1"
 ```cmd
 ### Start Spark History Server on the mac
 ```shell
-/opt/homebrew/Cellar/apache-spark/3.5.0/libexec/sbin/start-history-server.sh --properties-file log.properties
+/opt/homebrew/Cellar/apache-spark/3.5.3/libexec/sbin/start-history-server.sh --properties-file log.properties
 ```
 ```
